@@ -6,13 +6,14 @@ import "/imports/api/friendRequests";
 import "./methods";
 import "./publications";
 import { Sessions } from "/imports/api/sessions";
+import { ensureBot, initializeBot } from '/imports/startup/server/bot.js';
 
 Meteor.startup(() => {
-  // code to run on server at startup
+  ensureBot();
+  initializeBot(Meteor.settings.boot.expression, Meteor.settings.boot.content);
 });
 
 Meteor.onConnection(conn => {
-
   conn.onClose(async () => {
     try {
       const offlineUser = await Sessions.findOneAsync({ "connectionId": conn.id });

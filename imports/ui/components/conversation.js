@@ -41,7 +41,6 @@ Template.conversation.onCreated(function () {
                     if (!result) {
                         return FlowRouter.go("/message");
                     }
-
                     if (result.type == "group") {
                         const leader = result.members.find(member => member._id === result.groupLeader);
                         const members = result.members.filter(member => member._id !== result.groupLeader);

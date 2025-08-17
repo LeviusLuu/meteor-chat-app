@@ -19,9 +19,15 @@
                 <img src="{{headerInfo.avatar}}" class="rounded-circle me-3" width="45" height="45" alt="Avatar" />
                 <div class="w-100">
                     <h6 class="mb-1">{{headerInfo.name}}</h6>
+                    {{#if headerInfo.isSystem}}
+                    <div class="current-message">
+                        <small class="text-muted">System Message</small>
+                    </div>
+                    {{else}}
                     <div class="current-message">
                         <small class="text-muted">{{isUserOnline}}</small>
                     </div>
+                    {{/if}}
                 </div>
                 {{/if}}
 
@@ -115,10 +121,12 @@
 
         <div class="d-flex flex-column gap-2 justify-content-between align-items-center mt-auto w-100">
             {{#if isLeader}}
-            <button class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#changeGroupLeaderModal">Change
+            <button class="btn btn-outline-primary w-100" data-bs-toggle="modal"
+                data-bs-target="#changeGroupLeaderModal">Change
                 Group Leader</button>
 
-            <button class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#disbandGroupModal">Disband
+            <button class="btn btn-outline-danger w-100" data-bs-toggle="modal"
+                data-bs-target="#disbandGroupModal">Disband
                 Group</button>
             {{else}}
             <button class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#leaveGroupModal">Leave

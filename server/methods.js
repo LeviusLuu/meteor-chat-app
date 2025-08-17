@@ -39,6 +39,7 @@ Meteor.methods({
             { "profile.firstName": regex },
             { "profile.lastName": regex },
           ],
+          isSystem: { $exists: false }
         },
         {
           fields: {
@@ -404,7 +405,8 @@ Meteor.methods({
         'services.google.name': 1,
         'services.google.picture': 1,
         'services.google.email': 1,
-        'emails': 1
+        'emails': 1,
+        isSystem: 1
       }
     });
 
@@ -421,7 +423,8 @@ Meteor.methods({
         '/images/default-avatar.png',
       email: user.services?.google?.email ||
         (user.emails && user.emails[0]?.address) ||
-        'Unknown email'
+        'Unknown email',
+      isSystem: user.isSystem || false
     };
   },
   async "inboxes.insertGroup"(members, groupName) {

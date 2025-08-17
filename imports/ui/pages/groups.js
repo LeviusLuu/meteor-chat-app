@@ -63,6 +63,7 @@ Template.groups.events({
             if (error) {
                 alert("Error: " + error.message);
             } else {
+                console.log("Search results:", result);
                 const members = template.members.get();
                 result = result.filter(user => !members.find(member => member._id === user._id));
                 template.searchResults.set(result);
@@ -90,7 +91,6 @@ Template.groups.events({
 
         template.searchResults.set([...template.searchResults.get(), members.find(user => user._id === userId)]);
     },
-
     "click #btn-create-group"(event, template) {
         event.preventDefault();
         const groupName = document.getElementById("groupName").value.trim();
@@ -137,5 +137,11 @@ Template.groups.events({
         template.searchResults.set([]);
         document.getElementById("groupName").value = "";
         document.getElementById("usernameOrEmail").value = "";
+    },
+    "keypress #usernameOrEmail"(event, template) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById("searchUser").click();
+        }
     }
 });
