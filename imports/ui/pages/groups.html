@@ -1,0 +1,98 @@
+<template name="groups">
+  <div class="d-flex">
+    {{> subSidebar}}
+
+    <div class="d-flex flex-column main-content">
+      <div class="mt-1 d-flex justify-content-between align-items-center">
+        <h5>Groups ({{groupList.length}})</h5>
+        <i class="fa-solid fa-plus add-friend-btn" style="cursor: pointer" data-bs-toggle="modal"
+          data-bs-target="#addGroupModal"></i>
+      </div>
+
+      {{#if groupList.length}}
+      <div class="list-group">
+        {{#each groupList}}
+        <div class="list-group-item d-flex align-items-center justify-content-between py-3">
+          <div class="d-flex align-items-center">
+            <div class="group-avatar rounded-circle me-3">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <div>
+              <h6 class="mb-1">{{groupName}}</h6>
+              <small class="text-muted">{{this.members.length}} member{{#if this.members.length}}s{{/if}}</small>
+            </div>
+
+          </div>
+
+          <button class="btn btn-primary send-message" data-id="{{_id}}">
+            <i class="fa-solid fa-message"></i>
+          </button>
+
+        </div>
+        {{/each}}
+      </div>
+      {{else}}
+      <div class="w-100 text-center">No groups found.</div>
+      {{/if}}
+
+      <div class="modal fade" id="addGroupModal" tabindex="-1" role="dialog" aria-labelledby="addGroupModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addGroupModalLabel">Add Groups</h5>
+              <button type="button" class="btn-close cancelCreateGroupModal" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="groupName" class="form-label">Group Name</label>
+                <input type="text" class="form-control" id="groupName" placeholder="Enter group name" required/>
+              </div>
+
+              <label for="members" class="form-label">Members</label>
+              {{#if members.length}}
+              <div class="members-list mb-3">
+                {{#each members}}
+                <div class="member-item d-flex gap-2 align-items-center border border-secondary mb-2">
+                  <img src="{{getUserAvatar this}}" class="rounded-circle me-1" width="20" height="20" alt="Avatar" />
+                  <span>{{getUserDisplayName this}}</span>
+                  <i class="fa-solid fa-xmark icon-remove-member" data-user-id="{{_id}}"></i>
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <input type="text" class="form-control" id="usernameOrEmail" placeholder="Enter username or email" />
+                <button type="button" class="btn btn-primary" id="searchUser">Search</button>
+              </div>
+
+              {{#if searchResults.length}}
+              <div class="list-group">
+                {{#each searchResults}}
+                <div class="list-group-item d-flex align-items-center justify-content-between py-3">
+                  <div class="d-flex align-items-center">
+                    <img src="{{getUserAvatar this}}" class="rounded-circle me-3" width="45" height="45" alt="Avatar" />
+                    <div>
+                      <h6 class="mb-1">{{getUserDisplayName this}}</h6>
+                      <small class="text-muted">{{getUserEmail this}}</small>
+                    </div>
+                  </div>
+                  <button id="add-to-group" class="btn btn-outline-primary btn-sm" data-user-id="{{_id}}">Add to
+                    Group
+                  </button>
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary cancelCreateGroupModal" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" id="btn-create-group">Create Group</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

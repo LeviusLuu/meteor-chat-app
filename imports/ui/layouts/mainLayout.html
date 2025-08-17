@@ -1,0 +1,35 @@
+<template name="mainLayout">
+  <div class="d-flex">
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <img src="/images/logo.png" alt="Logo" class="logo" width="80" height="60">
+      </div>
+      <div class="sidebar-menu">
+        <a href="/message" class="sidebar-item {{isActiveRoute '/message'}}">
+          <i class="fa-solid fa-message"></i>
+        </a>
+        <a href="/friends" class="sidebar-item {{isActiveRoute}}">
+          <i class="fa-solid fa-address-book"></i>
+        </a>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="dropdown">
+          <button class="btn btn-settings dropdown-toggle" type="button" id="settingsDropdown" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            <i class="fa-solid fa-gear"></i>
+          </button>
+          <ul class="dropdown-menu settings-menu" aria-labelledby="settingsDropdown">
+            <li><a class="dropdown-item text-danger" id="logout-btn" href="#"><i class="fa-solid fa-sign-out-alt"></i>
+                Đăng xuất</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="content-wrapper">
+      {{> Template.dynamic template=main}}
+    </div>
+  </div>
+</template>

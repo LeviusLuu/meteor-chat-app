@@ -1,0 +1,55 @@
+.inboxes {
+    width: 20vw;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    height: 100vh;
+}
+
+.inbox-item-active {
+    background-color: #6747f59d;
+}
+
+.inbox-item-active:hover {
+    background-color: #6747f59d !important;
+}
+
+.inbox-item:hover {
+    background-color: #F1F2F4;
+}
+
+.current-message {
+    max-width: calc(30vw - 140px);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.badge-online {
+    left: 45px;
+}
+
+.group-avatar {
+    width: 50px;
+    height: 50px;
+    padding: 12px 15px;
+    background-color: #565e64;
+}
+
+.group-avatar>svg {
+    color: white;
+}
+
+.info>.group-avatar {
+    width: 60px;
+    height: 60px;
+    padding: 18px 20px;
+}
+
+.no-messages {
+    width: calc(100vw - 20vw - 63px);
+    color: black;
+    text-align: center;
+    padding-top: 20%;
+    margin-left: 2px;
+    background-image: url('/images/bg_login.jpg');
+}

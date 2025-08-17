@@ -1,0 +1,59 @@
+<template name="home">
+  <div class="d-flex">
+    <div class="d-flex flex-column inboxes">
+      {{#if inboxes.length}}
+      <div class="list-group">
+        {{#each inboxes}}
+        <div class="d-flex align-items-center justify-content-between py-3 px-2 inbox-item {{isSelectedInbox _id}}"
+          data-id="{{_id}}">
+          <div class="d-flex align-items-center gap-2">
+            <div class="position-relative d-inline-block">
+              {{#if isGroup this}}
+              <div class="group-avatar rounded-circle">
+                <i class="fa-solid fa-user-group"></i>
+              </div>
+              {{else}}
+              <img src="{{user.avatar}}" class="rounded-circle border border-2 border-white shadow" width="50"
+                height="50" alt="Avatar" />
+              {{#if isActive user._id}}
+              <span
+                class="badge-online position-absolute bottom-0 translate-middle p-1 bg-success border border-light rounded-circle">
+                <span class="visually-hidden">Online</span>
+              </span>
+              {{/if}}
+              {{/if}}
+
+            </div>
+
+            <div class="w-100">
+              <h6 class="mb-1">
+                {{#if isGroup this}}
+                {{groupName}}
+                {{else}}
+                {{user.name}}
+                {{/if}}
+
+              </h6>
+              <div class="current-message">
+                <small class="text-muted"> {{{renderLastMessage lastMessage user.name}}}</small>
+              </div>
+            </div>
+          </div>
+          <small class="text-muted align-self-start">{{timeHuman lastMessage.createdAt}}</small>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+
+    {{#if isMessagePage}}
+    {{> conversation}}
+    {{else}}
+    <div class="no-messages">
+      <h2>No messages selected</h2>
+    </div>
+    {{/if}}
+  </div>
+
+
+</template>

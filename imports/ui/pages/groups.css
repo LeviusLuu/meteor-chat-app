@@ -1,0 +1,10 @@
+.member-item {
+    border-radius: 5px;
+    width: fit-content;
+    padding: 5px 10px;
+    border-color: #ccc !important;
+}
+
+.member-item > svg {
+    font-size: 12px !important;
+}

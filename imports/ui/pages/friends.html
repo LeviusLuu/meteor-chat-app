@@ -1,0 +1,118 @@
+<template name="friends">
+    <div class="d-flex">
+        {{> subSidebar}}
+
+        <div class="d-flex flex-column main-content">
+            <div class="mt-1 d-flex justify-content-between align-items-center">
+                <h5>Friends ({{friendList.length}})</h5>
+                <i class="fa-solid fa-user-plus add-friend-btn" style="cursor: pointer" data-bs-toggle="modal"
+                    data-bs-target="#addFriendModal"></i>
+            </div>
+
+
+            {{#if friendList.length}}
+            <div class="list-group">
+                {{#each friendList}}
+                <div class="list-group-item d-flex align-items-center justify-content-between py-3">
+                    <div class="d-flex align-items-center">
+                        <img src="{{avatar}}" class="rounded-circle me-3" width="45" height="45" alt="Avatar" />
+                        <div>
+                            <h6 class="mb-1">{{name}}</h6>
+                            <small class="text-muted">{{email}}</small>
+                        </div>
+
+                    </div>
+                    <div>
+                        <button class="btn btn-primary send-message" data-id="{{friendshipId}}">
+                            <i class="fa-solid fa-message"></i>
+                        </button>
+
+                        <button class="btn btn-outline-danger unfriend-btn" data-id="{{friendshipId}}"
+                            data-bs-toggle="modal" data-bs-target="#removeFriendModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                class="bi bi-person-x-fill" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                    d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m6.146-2.854a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            {{else}}
+            <div class="w-100 text-center">No friends found.</div>
+            {{/if}}
+        </div>
+    </div>
+
+    <div class="modal fade" id="removeFriendModal" tabindex="-1" role="dialog" aria-labelledby="removeFriendModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="removeFriendModalLabel">Confirm Remove Friend</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to remove <strong>{{selectedUnfriend.name}}</strong> from your friends
+                        list?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmRemoveFriend"
+                        data-bs-dismiss="modal">Remove</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addFriendModal" tabindex="-1" role="dialog" aria-labelledby="addFriendModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addFriendModalLabel">Add Friend</h5>
+                    <button type="button" class="btn-close cancelAddFriendModal" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="searchUser">
+                        <div class="mb-3">
+                            <label for="usernameOrEmail" class="form-label">Username or Email</label>
+                            <input type="text" class="form-control" id="usernameOrEmail"
+                                placeholder="Enter username or email" />
+                        </div>
+                    </form>
+
+                    <!-- Search Results -->
+                    {{#if searchResults.length}}
+                    <div class="mt-4">
+                        <h6>Results</h6>
+                        <div class="list-group">
+                            {{#each searchResults}}
+                            <div class="list-group-item d-flex align-items-center justify-content-between py-3">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{getUserAvatar this}}" class="rounded-circle me-3" width="45" height="45"
+                                        alt="Avatar" />
+                                    <div>
+                                        <h6 class="mb-1">{{getUserDisplayName this}}</h6>
+                                        <small class="text-muted">{{getUserEmail this}}</small>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline-primary btn-sm send-request" data-user-id="{{_id}}">Send
+                                    Friend Request</button>
+                            </div>
+                            {{/each}}
+                        </div>
+                    </div>
+                    {{/if}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary cancelAddFriendModal"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="sendFriendRequest">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

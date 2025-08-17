@@ -1,0 +1,13 @@
+<template name="subSidebar">
+    <ul class="sub-sidebar list-group">
+        <li class="list-group-item d-flex align-items-center {{isActiveRoute '/friends'}} btn-redirect" data-href="/friends">
+            <a class="sidebar-link">Friends</a>
+        </li>
+        <li class="list-group-item d-flex align-items-center {{isActiveRoute '/groups'}} btn-redirect" data-href="/groups">
+            <a class="sidebar-link">Groups</a>
+        </li>
+        <li class="list-group-item d-flex align-items-center {{isActiveRoute '/friend-requests'}} btn-redirect" data-href="/friend-requests">
+            <a class="sidebar-link">Friend Requests</a>
+        </li>
+    </ul>
+</template>

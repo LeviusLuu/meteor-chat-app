@@ -1,0 +1,56 @@
+<template name="friendRequests">
+  <div class="d-flex">
+    {{> subSidebar}}
+
+    <div class="d-flex flex-column main-content">
+      <h5 class="my-2">Friend Requests Received ({{friendRequestsReceived.length}})</h5>
+
+      {{#if friendRequestsReceived.length}}
+      <div class="list-group">
+        {{#each friendRequestsReceived}}
+        <div class="list-group-item d-flex align-items-center justify-content-between py-3">
+          <div class="d-flex align-items-center">
+            <img src="{{requesterAvatar}}" class="rounded-circle me-3" width="45" height="45" alt="Avatar" />
+            <div>
+              <h6 class="mb-1">{{requesterName}}</h6>
+              <small class="text-muted">{{requesterEmail}}</small>
+            </div>
+
+          </div>
+          <div>
+            <button class="btn btn-secondary reject-friend-request" data-request-id="{{_id}}">Reject</button>
+            <button class="btn btn-primary accept-friend-request" data-request-id="{{_id}}">Accept</button>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+      {{else}}
+      <div class="w-100 text-center mb-3">No friend requests received found.</div>
+      {{/if}}
+
+      <h5 class="my-2">Friend Requests Sent ({{friendRequestsSent.length}})</h5>
+
+      {{#if friendRequestsSent.length}}
+      <div class="list-group">
+        {{#each friendRequestsSent}}
+        <div class="list-group-item d-flex align-items-center justify-content-between py-3">
+          <div class="d-flex align-items-center">
+            <img src="{{receiverAvatar}}" class="rounded-circle me-3" width="45" height="45" alt="Avatar" />
+            <div>
+              <h6 class="mb-1">{{receiverName}}</h6>
+              <small class="text-muted">{{receiverEmail}}</small>
+            </div>
+
+          </div>
+          <div>
+            <button class="btn btn-secondary btn-cancel-request" data-id="{{_id}}">Cancel Request</button>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+      {{else}}
+      <div class="w-100 text-center">No friend requests sent found.</div>
+      {{/if}}
+    </div>
+  </div>
+</template>
