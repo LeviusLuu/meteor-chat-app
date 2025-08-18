@@ -70,7 +70,7 @@ Template.groups.events({
             }
         });
     },
-    "click #add-to-group"(event, template) {
+    "click #invite-to-group"(event, template) {
         event.preventDefault();
         const userId = event.currentTarget.getAttribute("data-user-id");
 
@@ -105,7 +105,7 @@ Template.groups.events({
             alert("Please add at least 2 members to create a group");
             return;
         }
-        Meteor.call("inboxes.insertGroup", [...members, Meteor.userId()], groupName, (error, result) => {
+        Meteor.call("inboxes.insertGroup", members, groupName, (error, result) => {
             if (error) {
                 alert("Error: " + error.message);
             } else {

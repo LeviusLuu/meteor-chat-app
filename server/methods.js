@@ -4,6 +4,7 @@ import { FriendRequests } from "/imports/api/friendRequests";
 import { Inboxes } from "/imports/api/inboxes";
 import { Messages } from "/imports/api/messages";
 import { Sessions } from "/imports/api/sessions";
+import { GroupInvitations } from "/imports/api/groupInvitations";
 
 Meteor.methods({
   async "users.searchByUsernameOrEmailForSendRequest"(searchTerm) {
@@ -348,8 +349,17 @@ Meteor.methods({
     }
 
     try {
+      console.log(inboxes)
       inboxes = inboxes.map(async inbox => {
+        const lastMessage = await Messages.findOneAsync({ inboxId: inbox._id }, { sort: { createdAt: -1 } });
+
+
+
         const userId = inbox.members.find(member => member !== this.userId);
+        if (!userId) {
+          return { ...inbox, lastMessage };
+        }
+
         let user = await Meteor.users.findOneAsync({ _id: userId }, {
           fields: {
             username: 1,
@@ -376,9 +386,9 @@ Meteor.methods({
             'Unknown email'
         };
 
-        const lastMessage = await Messages.findOneAsync({ inboxId: inbox._id }, { sort: { createdAt: -1 } });
         return { ...inbox, user, lastMessage };
       });
+
 
       return await Promise.all(inboxes);
     } catch (error) {
@@ -438,7 +448,7 @@ Meteor.methods({
     try {
       const newInbox = await Inboxes.insertAsync({
         groupName,
-        members,
+        members: [this.userId],
         type: "group",
         groupLeader: this.userId,
         createdAt: new Date(),
@@ -454,6 +464,19 @@ Meteor.methods({
       });
 
       const inbox = await Inboxes.findOneAsync(newInbox);
+
+      const invitations = members.map(userId => ({
+        groupId: inbox._id,
+        senderId: this.userId,
+        recipientId: userId,
+        status: "pending",
+        createdAt: new Date()
+      }));
+
+      for (const invitation of invitations) {
+        await GroupInvitations.insertAsync(invitation);
+      }
+
       return inbox;
     } catch (error) {
       console.error("Error creating inbox:", error);
@@ -703,7 +726,7 @@ Meteor.methods({
 
       await Messages.insertAsync({
         inboxId: groupId,
-        content: `Group leader has been changed to ${userId}`,
+        content: `Group leader has been changed`,
         isSystem: true,
         type: "group_leader_changed",
         createdAt: new Date(),
@@ -714,5 +737,135 @@ Meteor.methods({
       console.error("Error changing group leader:", error);
       throw new Meteor.Error("change-group-leader-failed", "Could not change group leader: " + error.message);
     }
-  }
+  },
+  async "groupInvitations.getReceived"() {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in');
+    }
+
+    try {
+      const invitations = await GroupInvitations.find({ recipientId: this.userId, status: "pending" }).fetchAsync();
+      return Promise.all(invitations.map(async (invitation) => {
+        const sender = await Meteor.users.findOneAsync(invitation.senderId, {
+          fields: {
+            username: 1,
+            'profile': 1,
+            'services.google.name': 1,
+            'services.google.picture': 1,
+            'services.google.email': 1
+          }
+        });
+
+        const group = await Inboxes.findOneAsync({ _id: invitation.groupId });
+
+        const senderName = sender ?
+          (sender.username ||
+            (sender.profile && sender.profile.name) ||
+            (sender.services && sender.services.google && sender.services.google.name) ||
+            'Unknown user') : 'Unknown user';
+
+        const senderAvatar = sender ?
+          ((sender.profile && sender.profile.avatar) ||
+            (sender.services && sender.services.google && sender.services.google.picture) ||
+            '/images/default-avatar.png') : '/images/default-avatar.png';
+
+        const senderEmail = sender ? ((sender.services && sender.services.google && sender.services.google.email) || 'Unknown email') : 'Unknown email';
+
+        return {
+          ...invitation,
+          senderName: senderName,
+          senderAvatar: senderAvatar,
+          senderEmail: senderEmail,
+          groupName: group ? group.groupName : 'Unknown group'
+        };
+      }));
+    } catch (error) {
+      console.error("Error getting group invitations:", error);
+      throw new Meteor.Error("fetch-invitations-failed", "Could not get group invitations: " + error.message);
+    }
+  },
+  async "groupInvitations.getSent"() {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in');
+    }
+
+    try {
+      const invitations = await GroupInvitations.find({ senderId: this.userId, status: "pending" }).fetchAsync();
+      return Promise.all(invitations.map(async (invitation) => {
+        const recipient = await Meteor.users.findOneAsync(invitation.recipientId, {
+          fields: {
+            username: 1,
+            'profile': 1,
+            'services.google.name': 1,
+            'services.google.picture': 1,
+            'services.google.email': 1
+          }
+        });
+
+        const group = await Inboxes.findOneAsync(invitation.groupId);
+
+        const recipientName = recipient ?
+          (recipient.username ||
+            (recipient.profile && recipient.profile.name) ||
+            (recipient.services && recipient.services.google && recipient.services.google.name) ||
+            'Unknown user') : 'Unknown user';
+
+        const recipientAvatar = recipient ?
+          ((recipient.profile && recipient.profile.avatar) ||
+            (recipient.services && recipient.services.google && recipient.services.google.picture) ||
+            '/images/default-avatar.png') : '/images/default-avatar.png';
+
+        const recipientEmail = recipient ? ((recipient.services && recipient.services.google && recipient.services.google.email) || 'Unknown email') : 'Unknown email';
+
+        return {
+          ...invitation,
+          recipientName: recipientName,
+          recipientAvatar: recipientAvatar,
+          recipientEmail: recipientEmail,
+          groupName: group ? group.groupName : 'Unknown group'
+        };
+      }));
+    } catch (error) {
+      console.error("Error getting group invitations:", error);
+      throw new Meteor.Error("fetch-invitations-failed", "Could not get group invitations: " + error.message);
+    }
+  },
+  async "groupInvitations.accept"(invitationId) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in');
+    }
+
+    try {
+      const invitation = await GroupInvitations.findOneAsync({ _id: invitationId, recipientId: this.userId, status: "pending" });
+      if (!invitation) {
+        throw new Meteor.Error('not-found', 'Invitation not found');
+      }
+
+      await Inboxes.updateAsync(
+        { _id: invitation.groupId },
+        { $addToSet: { members: this.userId } },
+      );
+
+      await GroupInvitations.removeAsync({ _id: invitationId });
+    } catch (error) {
+      console.error("Error accepting invitation:", error);
+      throw new Meteor.Error("accept-invitation-failed", "Could not accept invitation: " + error.message);
+    }
+  },
+  async "groupInvitations.remove"(invitationId) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in');
+    }
+
+    try {
+      const invitation = await GroupInvitations.findOneAsync({ _id: invitationId, recipientId: this.userId });
+      if (!invitation) {
+        throw new Meteor.Error('not-found', 'Invitation not found');
+      }
+      await GroupInvitations.removeAsync({ _id: invitationId });
+    } catch (error) {
+      console.error("Error declining invitation:", error);
+      throw new Meteor.Error("decline-invitation-failed", "Could not decline invitation: " + error.message);
+    }
+  },
 });

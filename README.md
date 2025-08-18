@@ -11,7 +11,7 @@ Then in your project directory, run:
 
 ```
 meteor npm install
-meteor
+meteor --settings settings.json
 ```
 
 Open up http://localhost:3000/ and see the result. Trying opening in two different windows!

@@ -12,6 +12,7 @@ import '/imports/ui/pages/groups.html';
 import '/imports/ui/pages/friendRequests.html';
 import '/imports/ui/components/subSidebar.html';
 import '/imports/ui/components/conversation.html';
+import '/imports/ui/pages/groupInvitations.html';
 
 import '/imports/ui/layouts/mainLayout.js';
 import '/imports/ui/pages/home.js';
@@ -21,3 +22,4 @@ import '/imports/ui/pages/groups.js';
 import '/imports/ui/pages/friendRequests.js';
 import '/imports/ui/components/subSidebar.js';
 import '/imports/ui/components/conversation.js';
+import '/imports/ui/pages/groupInvitations.js';

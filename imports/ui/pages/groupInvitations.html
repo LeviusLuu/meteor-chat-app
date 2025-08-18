@@ -1,0 +1,61 @@
+<template name="groupInvitations">
+    <div class="d-flex">
+        {{> subSidebar}}
+
+        <div class="d-flex flex-column main-content">
+            <h5 class="my-2">Group Invitations Received ({{groupInvitationsReceived.length}})</h5>
+            {{#if groupInvitationsReceived.length}}
+            <div class="list-group">
+                {{#each groupInvitationsReceived}}
+                <div class="list-group-item d-flex align-items-center justify-content-between py-3">
+                    <div class="d-flex align-items-center">
+                        <div class="group-avatar rounded-circle me-3">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">{{groupName}}</h6>
+                            <small class="text-muted">{{requesterEmail}}</small>
+                        </div>
+
+                    </div>
+                    <div>
+                        <button class="btn btn-secondary reject-invitation"
+                            data-request-id="{{_id}}">Reject</button>
+                        <button class="btn btn-primary accept-invitation"
+                            data-request-id="{{_id}}">Accept</button>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            {{else}}
+            <div class="w-100 text-center mb-3">No friend requests received found.</div>
+            {{/if}}
+
+            <h5 class="my-2">Group Invitations Sent ({{groupInvitationsSent.length}})</h5>
+            {{#if groupInvitationsSent.length}}
+            <div class="list-group">
+                {{#each groupInvitationsSent}}
+                <div class="list-group-item d-flex align-items-center justify-content-between py-3">
+                    <div class="d-flex align-items-center">
+                        <div class="group-avatar rounded-circle me-3">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">{{groupName}}</h6>
+                            <small class="text-muted">{{requesterEmail}}</small>
+                        </div>
+
+                    </div>
+                    <div>
+                        <button class="btn btn-secondary btn-cancel-invitation" data-id="{{_id}}">Cancel
+                            Invitation</button>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            {{else}}
+            <div class="w-100 text-center mb-3">No group invitations sent found.</div>
+            {{/if}}
+        </div>
+    </div>
+</template>

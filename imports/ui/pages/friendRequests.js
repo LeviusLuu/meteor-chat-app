@@ -1,8 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
 import './friendRequests.html';
 
 Template.friendRequests.onCreated(function () {
@@ -19,7 +17,7 @@ Template.friendRequests.onCreated(function () {
         });
         Meteor.call('friendRequests.getRequested', (error, result) => {
             if (error) {
-                console.error('Lỗi khi lấy yêu cầu kết bạn:', error);
+                console.log('Lỗi khi lấy yêu cầu kết bạn đã gửi:', error);
             } else {
                 this.friendRequestsSent.set(result);
             }
@@ -33,10 +31,6 @@ Template.friendRequests.helpers({
     },
     friendRequestsSent() {
         return Template.instance().friendRequestsSent.get();
-    },
-    formatDate(date) {
-        if (!date) return '';
-        return format(date, "d MMMM yyyy 'lúc' HH:mm", { locale: vi });
     }
 });
 

@@ -92,7 +92,7 @@ Template.friends.events({
   "click #sendFriendRequest"(event, template) {
     event.preventDefault();
 
-    const form = document.getElementById("addFriendForm");
+    const form = document.getElementById("searchUser");
     if (form) {
       form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
     }

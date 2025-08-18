@@ -41,12 +41,13 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="addGroupModalLabel">Add Groups</h5>
-              <button type="button" class="btn-close cancelCreateGroupModal" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button type="button" class="btn-close cancelCreateGroupModal" data-bs-dismiss="modal"
+                aria-label="Close"></button>
             </div>
             <div class="modal-body">
               <div class="mb-3">
                 <label for="groupName" class="form-label">Group Name</label>
-                <input type="text" class="form-control" id="groupName" placeholder="Enter group name" required/>
+                <input type="text" class="form-control" id="groupName" placeholder="Enter group name" required />
               </div>
 
               <label for="members" class="form-label">Members</label>
@@ -78,8 +79,8 @@
                       <small class="text-muted">{{getUserEmail this}}</small>
                     </div>
                   </div>
-                  <button id="add-to-group" class="btn btn-outline-primary btn-sm" data-user-id="{{_id}}">Add to
-                    Group
+                  <button id="invite-to-group" class="btn btn-outline-primary btn-sm" data-user-id="{{_id}}">
+                    Invite to Group
                   </button>
                 </div>
                 {{/each}}
@@ -87,7 +88,8 @@
               {{/if}}
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary cancelCreateGroupModal" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-secondary cancelCreateGroupModal"
+                data-bs-dismiss="modal">Cancel</button>
               <button type="button" class="btn btn-primary" id="btn-create-group">Create Group</button>
             </div>
           </div>

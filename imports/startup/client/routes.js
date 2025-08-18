@@ -7,6 +7,7 @@ import '/imports/ui/pages/login.html';
 import '/imports/ui/pages/friends.html';
 import '/imports/ui/pages/groups.html';
 import '/imports/ui/pages/friendRequests.html';
+import '/imports/ui/pages/friendRequests.html';
 
 FlowRouter.route('/message/:id?', {
     name: 'home',
@@ -59,6 +60,17 @@ FlowRouter.route('/friend-requests', {
             FlowRouter.go('/login');
         } else {
             this.render('mainLayout', { main: 'friendRequests' });
+        }
+    }
+});
+
+FlowRouter.route('/group-invitations', {
+    name: 'groupInvitations',
+    action() {
+        if (!Meteor.userId()) {
+            FlowRouter.go('/login');
+        } else {
+            this.render('mainLayout', { main: 'groupInvitations' });
         }
     }
 });

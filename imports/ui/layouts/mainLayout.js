@@ -10,7 +10,7 @@ Template.mainLayout.helpers({
       return 'active';
     }
 
-    const includeFriendItemArr = ['/friends', '/groups', '/friend-requests']
+    const includeFriendItemArr = ['/friends', '/groups', '/friend-requests', '/group-invitations']
     if (route !== '/message' && includeFriendItemArr.includes(currentPath)) {
       return 'active';
     }
