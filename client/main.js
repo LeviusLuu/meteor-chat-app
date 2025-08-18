@@ -23,3 +23,9 @@ import '/imports/ui/pages/friendRequests.js';
 import '/imports/ui/components/subSidebar.js';
 import '/imports/ui/components/conversation.js';
 import '/imports/ui/pages/groupInvitations.js';
+
+import { Meteor } from 'meteor/meteor';
+import { Accounts } from 'meteor/accounts-base';
+
+Accounts.loginServicesConfigured();
+

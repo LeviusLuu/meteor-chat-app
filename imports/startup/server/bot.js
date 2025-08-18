@@ -1,9 +1,9 @@
-import cron from 'node-cron';
-import { Meteor } from 'meteor/meteor';
-import { Messages } from '/imports/api/messages';
-import { Inboxes } from '/imports/api/inboxes'
+import cron from "node-cron";
+import { Meteor } from "meteor/meteor";
+import { Messages } from "/imports/api/messages";
+import { Inboxes } from "/imports/api/inboxes";
 
-export async function ensureBot() {
+async function ensureBot() {
   const bot = await Meteor.users.updateAsync(
     { isSystem: true },
     {
@@ -12,30 +12,30 @@ export async function ensureBot() {
           google: {
             name: Meteor.settings.boot.name,
             email: "bot@gmail.com",
-            picture: Meteor.settings.boot.picture
-          }
+            picture: Meteor.settings.boot.picture,
+          },
         },
         profile: {
-          name: Meteor.settings.boot.name
-        }
+          name: Meteor.settings.boot.name,
+        },
       },
-      $setOnInsert: { createdAt: new Date() }
+      $setOnInsert: { createdAt: new Date() },
     },
     { upsert: true }
-  )
+  );
   return bot;
 }
 
 async function ensureInbox(userId, botId) {
   const existingInbox = await Inboxes.findOneAsync({
-    members: { $all: [userId, botId] }
+    members: { $all: [userId, botId] },
   });
 
   if (!existingInbox) {
     return Inboxes.insertAsync({
       type: "private",
       members: [userId, botId],
-      createdAt: new Date()
+      createdAt: new Date(),
     });
   }
 
@@ -48,7 +48,7 @@ export async function initializeBot(expression = "0 3 * * *", content = "Hello! 
     const bot = await Meteor.users.findOneAsync({ isSystem: true });
     const users = await Meteor.users.find({ _id: { $ne: bot._id } }).fetchAsync();
 
-    users.forEach(async user => {
+    users.forEach(async (user) => {
       await ensureInbox(user._id, bot._id);
       const inbox = await Inboxes.findOneAsync({ members: { $all: [user._id, bot._id] } });
       if (inbox) {

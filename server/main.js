@@ -5,23 +5,27 @@ import "/imports/api/messages";
 import "/imports/api/friendRequests";
 import "./methods";
 import "./publications";
+import "/imports/startup/server/oauth-config";
 import { Sessions } from "/imports/api/sessions";
-import { ensureBot, initializeBot } from '/imports/startup/server/bot.js';
+import { initializeBot } from "/imports/startup/server/bot.js";
 
 Meteor.startup(() => {
-  ensureBot();
   initializeBot(Meteor.settings.boot.expression, Meteor.settings.boot.content);
 });
 
-Meteor.onConnection(conn => {
+Meteor.onConnection((conn) => {
   conn.onClose(async () => {
     try {
-      const offlineUser = await Sessions.findOneAsync({ "connectionId": conn.id });
+      const offlineUser = await Sessions.findOneAsync({ connectionId: conn.id });
       if (offlineUser) {
-        await Sessions.updateAsync({ userId: offlineUser.userId }, {
-          $set: { "online": false, "lastActivity": new Date() },
-          $unset: { "connectionId": "" }
-        }, { upsert: true });
+        await Sessions.updateAsync(
+          { userId: offlineUser.userId },
+          {
+            $set: { online: false, lastActivity: new Date() },
+            $unset: { connectionId: "" },
+          },
+          { upsert: true }
+        );
       }
     } catch (error) {
       console.error("Error in onClose handler:", error);
@@ -29,7 +33,7 @@ Meteor.onConnection(conn => {
   });
 });
 
-Accounts.onLogin(async info => {
+Accounts.onLogin(async (info) => {
   const connectionId = info.connection && info.connection.id;
   const userId = info.user._id;
 
@@ -40,12 +44,10 @@ Accounts.onLogin(async info => {
         connectionId: connectionId || null,
         online: true,
         lastActivity: new Date(),
-        lastLogin: new Date()
+        lastLogin: new Date(),
       },
-      $setOnInsert: { createdAt: new Date() }
+      $setOnInsert: { createdAt: new Date() },
     },
     { upsert: true }
   );
 });
-
-

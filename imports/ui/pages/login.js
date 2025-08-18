@@ -9,7 +9,7 @@ Template.login.events({
       requestPermissions: ['email', 'profile']
     }, (err) => {
       if (err) {
-        alert('Đăng nhập thất bại: ' + err.reason);
+        console.error('Login failed:', err);
       } else {
         FlowRouter.go('/message');
       }
