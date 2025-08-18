@@ -14,7 +14,7 @@ Template.conversation.onCreated(function () {
   this.messages = new ReactiveVar([]);
   this.headerInfo = new ReactiveVar(null);
   this.userId = new ReactiveVar(null);
-  this.isShowInfo = new ReactiveVar(true);
+  this.isShowInfo = new ReactiveVar(false);
   this.isEditingGroupName = new ReactiveVar(false);
   this.members = new ReactiveVar([]);
   this.leader = new ReactiveVar(null);
@@ -269,8 +269,26 @@ Template.conversation.events({
         alert("Error: " + error.message);
       } else {
         const members = template.members.get();
-        result = result.filter((user) => !members.find((member) => member._id === user._id));
-        template.searchResults.set(result);
+        let filteredResult = result.filter((user) => !members.find((member) => member._id === user._id));
+
+        const invitationChecks = filteredResult.map(user =>
+          new Promise((resolve) => {
+            Meteor.call("groupInvitations.findOne", user._id, template.currentInboxId.get(), (error, invitation) => {
+              if (error) {
+                console.error("Error finding group invitation:", error);
+                resolve({ user, invited: false });
+              } else {
+                resolve({ user, invited: !!invitation });
+              }
+            });
+          })
+        );
+
+        Promise.all(invitationChecks).then(results => {
+          // Only include users who are not already invited
+          const finalResults = results.filter(r => !r.invited).map(r => r.user);
+          template.searchResults.set(finalResults);
+        });
       }
     });
   },
@@ -316,8 +334,13 @@ Template.conversation.events({
     template.inviteList.set([]);
     template.searchResults.set([]);
     document.getElementById("usernameOrEmail").value = "";
+  },
+  "keypress #usernameOrEmail"(event, template) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      document.getElementById("searchUser").click();
+    }
   }
-
 });
 
 Template.conversation.onRendered(function () {

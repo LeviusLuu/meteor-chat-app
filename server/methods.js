@@ -887,5 +887,28 @@ Meteor.methods({
       console.error("Error adding members to group:", error);
       throw new Meteor.Error("add-members-failed", "Could not add members to group: " + error.message);
     }
+  },
+  async "groupInvitations.findOne"(userId, inboxId) {
+    check(inboxId, String);
+    check(userId, String);
+
+    console.log("Finding group invitation for inboxId:", inboxId, "and userId:", userId);
+
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in');
+    }
+
+    try {
+      const invitation = await GroupInvitations.findOneAsync({
+        groupId: inboxId,
+        recipientId: userId,
+        status: "pending"
+      });
+
+      return invitation;
+    } catch (error) {
+      console.error("Error finding group invitation:", error);
+      throw new Meteor.Error("find-invitation-failed", "Could not find group invitation: " + error.message);
+    }
   }
 });
