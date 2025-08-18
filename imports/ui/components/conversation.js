@@ -19,6 +19,8 @@ Template.conversation.onCreated(function () {
   this.members = new ReactiveVar([]);
   this.leader = new ReactiveVar(null);
   this.searchResults = new ReactiveVar([]);
+  this.inviteList = new ReactiveVar([]);
+
   this.autorun(() => {
     const currentInboxId = FlowRouter.getParam("id");
     this.currentInboxId.set(currentInboxId);
@@ -137,6 +139,9 @@ Template.conversation.helpers({
   getUserAvatar(user) {
     return user.services?.google?.picture || "/images/default-avatar.png";
   },
+  inviteList() {
+    return Template.instance().inviteList.get();
+  },
 });
 
 Template.conversation.events({
@@ -254,7 +259,6 @@ Template.conversation.events({
   "click #searchUser"(event, template) {
     event.preventDefault();
     const usernameOrEmail = document.getElementById("usernameOrEmail").value.trim();
-    console.log("Searching for:", usernameOrEmail);
     if (!usernameOrEmail) {
       template.searchResults.set([]);
       return;
@@ -264,13 +268,56 @@ Template.conversation.events({
       if (error) {
         alert("Error: " + error.message);
       } else {
-        console.log("Search results:", result);
         const members = template.members.get();
         result = result.filter((user) => !members.find((member) => member._id === user._id));
         template.searchResults.set(result);
       }
     });
   },
+  "click .invite-to-group"(event, template) {
+    event.preventDefault();
+    const userId = event.currentTarget.getAttribute("data-user-id");
+    const inviteList = template.inviteList.get();
+    const user = template.searchResults.get().find(user => user._id === userId);
+    inviteList.push(user);
+    template.inviteList.set(inviteList);
+    const searchResults = template.searchResults.get();
+    template.searchResults.set(searchResults.filter(user => user._id !== userId));
+  },
+  "click .icon-remove-member"(event, template) {
+    event.preventDefault();
+    const userId = event.currentTarget.getAttribute("data-user-id");
+
+    const inviteList = template.inviteList.get();
+    const updatedInviteList = inviteList.filter(user => user._id !== userId);
+    template.inviteList.set(updatedInviteList);
+
+    template.searchResults.set([...template.searchResults.get(), inviteList.find(user => user._id === userId)]);
+  },
+  "click #confirmInvite"(event, template) {
+    const members = template.inviteList.get();
+    Meteor.call("groupInvitations.addMany", template.currentInboxId.get(), members, (error, result) => {
+      if (error) {
+        alert("Error: " + error.message);
+      }
+      if (result) {
+        try {
+          $('#inviteModal').modal('hide');
+          $('.modal-backdrop').remove();
+          $('body').removeClass('modal-open');
+        } catch (e) {
+          console.error("Error closing modal:", e);
+        }
+      }
+    });
+  },
+  "click #cancel-invite-btn"(event, template) {
+    event.preventDefault();
+    template.inviteList.set([]);
+    template.searchResults.set([]);
+    document.getElementById("usernameOrEmail").value = "";
+  }
+
 });
 
 Template.conversation.onRendered(function () {

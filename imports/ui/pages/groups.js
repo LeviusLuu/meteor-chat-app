@@ -63,14 +63,13 @@ Template.groups.events({
             if (error) {
                 alert("Error: " + error.message);
             } else {
-                console.log("Search results:", result);
                 const members = template.members.get();
                 result = result.filter(user => !members.find(member => member._id === user._id));
                 template.searchResults.set(result);
             }
         });
     },
-    "click #invite-to-group"(event, template) {
+    "click .invite-to-group"(event, template) {
         event.preventDefault();
         const userId = event.currentTarget.getAttribute("data-user-id");
 

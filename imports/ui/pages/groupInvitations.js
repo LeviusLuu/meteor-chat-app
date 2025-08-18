@@ -11,14 +11,12 @@ Template.groupInvitations.onCreated(function () {
 
     Meteor.call("groupInvitations.getReceived", (error, result) => {
         if (!error) {
-            console.log('Group invitations received:', result);
             this.groupInvitationsReceived.set(result);
         }
     });
 
     Meteor.call("groupInvitations.getSent", (error, result) => {
         if (!error) {
-            console.log('Group invitations sent:', result);
             this.groupInvitationsSent.set(result);
         }
     });
@@ -41,7 +39,6 @@ Template.groupInvitations.events({
             if (error) {
                 console.error("Error accepting invitation:", error);
             } else {
-                console.log("Invitation accepted successfully");
                 template.groupInvitationsReceived.set(template.groupInvitationsReceived.get().filter(invitation => invitation._id !== invitationId));
             }
         });
@@ -52,7 +49,6 @@ Template.groupInvitations.events({
             if (error) {
                 console.error("Error removing invitation:", error);
             } else {
-                console.log("Invitation removed successfully");
                 template.groupInvitationsReceived.set(template.groupInvitationsReceived.get().filter(invitation => invitation._id !== invitationId));
             }
         });

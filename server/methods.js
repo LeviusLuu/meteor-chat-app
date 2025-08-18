@@ -349,11 +349,8 @@ Meteor.methods({
     }
 
     try {
-      console.log(inboxes)
       inboxes = inboxes.map(async inbox => {
         const lastMessage = await Messages.findOneAsync({ inboxId: inbox._id }, { sort: { createdAt: -1 } });
-
-
 
         const userId = inbox.members.find(member => member !== this.userId);
         if (!userId) {
@@ -868,4 +865,27 @@ Meteor.methods({
       throw new Meteor.Error("decline-invitation-failed", "Could not decline invitation: " + error.message);
     }
   },
+  async "groupInvitations.addMany"(inboxId, members) {
+    check(inboxId, String);
+    check(members, Array);
+
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in');
+    }
+
+    try {
+      members.forEach(member => {
+        return GroupInvitations.insertAsync({
+          groupId: inboxId,
+          recipientId: member._id,
+          senderId: this.userId,
+          status: "pending"
+        });
+      });
+      return true;
+    } catch (error) {
+      console.error("Error adding members to group:", error);
+      throw new Meteor.Error("add-members-failed", "Could not add members to group: " + error.message);
+    }
+  }
 });
