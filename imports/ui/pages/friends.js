@@ -14,7 +14,7 @@ Template.friends.onCreated(function () {
   this.autorun(() => {
     Meteor.call("friendRequests.getAccepted", (error, result) => {
       if (error) {
-        console.error("Lỗi khi lấy danh sách bạn bè:", error);
+        console.error("Error fetching accepted friend requests:", error);
       } else {
         this.friendList.set(result);
       }
@@ -60,7 +60,7 @@ Template.friends.events({
 
     const usernameOrEmail = document.getElementById("usernameOrEmail").value.trim();
     if (!usernameOrEmail) {
-      alert("Please enter a username or email");
+      console.error("Please enter a username or email");
       return;
     }
 
@@ -69,7 +69,7 @@ Template.friends.events({
     Meteor.call("users.searchByUsernameOrEmailForSendRequest", usernameOrEmail, (error, result) => {
       if (error) {
         console.error("Error searching users:", error);
-        alert("Error searching for users");
+        console.error("Error searching for users");
         return;
       }
 

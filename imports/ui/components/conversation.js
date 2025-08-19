@@ -158,7 +158,7 @@ Template.conversation.events({
 
     Meteor.call("messages.insert", inboxId, content, (error, result) => {
       if (error) {
-        console.error("Lỗi khi gửi tin nhắn:", error);
+        console.error("Error messages.insert:", error);
       } else {
         messageInput.val("");
       }
@@ -190,7 +190,7 @@ Template.conversation.events({
             groupName: newGroupName,
           });
         } else {
-          alert(result.message || "Failed to update group name");
+          console.log(result.message || "Failed to update group name");
         }
       }
     });
@@ -206,7 +206,7 @@ Template.conversation.events({
     const groupId = template.currentInboxId.get();
     Meteor.call("groups.leaveGroup", groupId, (error, result) => {
       if (error) {
-        alert("Error: " + error.message);
+        console.log("Error: " + error.message);
       } else {
         if (result.result) {
           let headerInfo = template.headerInfo.get();
@@ -214,7 +214,7 @@ Template.conversation.events({
           template.headerInfo.set(headerInfo);
           FlowRouter.go("/message");
         } else {
-          alert(result.message);
+          console.log(result.message);
         }
       }
     });
@@ -229,7 +229,7 @@ Template.conversation.events({
         if (result.result) {
           FlowRouter.go("/message");
         } else {
-          alert(result.message);
+          console.log(result.message);
         }
       }
     });
@@ -241,7 +241,7 @@ Template.conversation.events({
 
     Meteor.call("groups.changeLeader", groupId, userId, (error, result) => {
       if (error) {
-        alert("Error: " + error.message);
+        console.log("Error: " + error.message);
       } else {
         if (result.result) {
           const members = template.members.get();
@@ -251,7 +251,7 @@ Template.conversation.events({
           const newMembers = members.filter((member) => member._id !== userId);
           template.members.set(newMembers);
         } else {
-          alert(result.message);
+          console.log(result.message);
         }
       }
     });
@@ -266,7 +266,7 @@ Template.conversation.events({
 
     Meteor.call("friendRequests.findFriends", usernameOrEmail, (error, result) => {
       if (error) {
-        alert("Error: " + error.message);
+        console.log("Error: " + error.message);
       } else {
         const members = template.members.get();
         let filteredResult = result.filter((user) => !members.find((member) => member._id === user._id));
@@ -316,7 +316,7 @@ Template.conversation.events({
     const members = template.inviteList.get();
     Meteor.call("groupInvitations.addMany", template.currentInboxId.get(), members, (error, result) => {
       if (error) {
-        alert("Error: " + error.message);
+        console.log("Error: " + error.message);
       }
       if (result) {
         try {

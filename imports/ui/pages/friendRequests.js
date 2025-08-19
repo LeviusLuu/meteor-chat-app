@@ -10,14 +10,14 @@ Template.friendRequests.onCreated(function () {
     this.autorun(() => {
         Meteor.call('friendRequests.getReceived', (error, result) => {
             if (error) {
-                console.error('Lỗi khi lấy yêu cầu kết bạn:', error);
+                console.error('Error fetching received friend requests:', error);
             } else {
                 this.friendRequestsReceived.set(result);
             }
         });
         Meteor.call('friendRequests.getRequested', (error, result) => {
             if (error) {
-                console.log('Lỗi khi lấy yêu cầu kết bạn đã gửi:', error);
+                console.log('Error fetching sent friend requests:', error);
             } else {
                 this.friendRequestsSent.set(result);
             }
@@ -39,7 +39,7 @@ Template.friendRequests.events({
         const requestId = event.currentTarget.dataset.requestId;
         Meteor.call("friendRequests.delete", requestId, (error, result) => {
             if (error) {
-                console.error("Lỗi khi từ chối yêu cầu kết bạn:", error);
+                console.error("Error rejecting friend request:", error);
             } else {
                 instance.friendRequestsReceived.set(
                     instance.friendRequestsReceived.get().filter(req => req._id !== requestId)
@@ -52,7 +52,7 @@ Template.friendRequests.events({
         const requestId = event.currentTarget.dataset.requestId;
         Meteor.call("friendRequests.accept", requestId, (error, result) => {
             if (error) {
-                console.error("Lỗi khi chấp nhận yêu cầu kết bạn:", error);
+                console.error("Error accepting friend request:", error);
             } else {
                 instance.friendRequestsReceived.set(
                     instance.friendRequestsReceived.get().filter(req => req._id !== requestId)
@@ -65,7 +65,7 @@ Template.friendRequests.events({
         const requestId = event.currentTarget.dataset.id;
         Meteor.call("friendRequests.delete", requestId, (error, result) => {
             if (error) {
-                console.error("Lỗi khi hủy yêu cầu kết bạn:", error);
+                console.error("Error cancelling friend request:", error);
             } else {
                 instance.friendRequestsSent.set(
                     instance.friendRequestsSent.get().filter(req => req._id !== requestId)

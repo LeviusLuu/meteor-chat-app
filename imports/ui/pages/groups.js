@@ -61,7 +61,7 @@ Template.groups.events({
 
         Meteor.call("friendRequests.findFriends", usernameOrEmail, (error, result) => {
             if (error) {
-                alert("Error: " + error.message);
+                console.error("Error: " + error.message);
             } else {
                 const members = template.members.get();
                 result = result.filter(user => !members.find(member => member._id === user._id));
@@ -95,18 +95,18 @@ Template.groups.events({
         const groupName = document.getElementById("groupName").value.trim();
 
         if (!groupName) {
-            alert("Please enter a group name");
+            console.error("Please enter a group name");
             return;
         }
 
         const members = template.members.get().map(user => user._id);
         if (members.length < 2) {
-            alert("Please add at least 2 members to create a group");
+            console.error("Please add at least 2 members to create a group");
             return;
         }
         Meteor.call("inboxes.insertGroup", members, groupName, (error, result) => {
             if (error) {
-                alert("Error: " + error.message);
+                console.error("Error: " + error.message);
             } else {
                 template.members.set([]);
                 template.searchResults.set([]);
